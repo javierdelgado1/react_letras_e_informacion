@@ -1,10 +1,11 @@
 import React, {useState} from "react";
 
-const Formulario = ({guardarBusquedaLetra}) => {
+const Formulario = ({guardarBusquedaLetra, loading}) => {
     const [busqueda, guardarBusqueda] = useState({
-        artista: '',
-        cancion: ''
+        artista: 'Maná',
+        cancion: 'Labios compartidos'
     })
+    
     const [error, guardarError ] = useState(false)
     const onChange= e =>{
         guardarBusqueda({
@@ -16,14 +17,19 @@ const Formulario = ({guardarBusquedaLetra}) => {
     const {artista, cancion} = busqueda;
 
     const buscarInformacion = e =>{
-        e.preventDefault();
-
+        e.preventDefault();        
         if(artista.trim() ==='' || cancion.trim() ===''){
             guardarError(true);
             return ;
         }
-        guardarBusquedaLetra(busqueda)
+        guardarBusquedaLetra(busqueda)     
+
     }
+    // if(artista.trim() ==='' || cancion.trim() ===''){
+    //     guardarError(true);
+    //     return ;
+    // }
+    // guardarBusquedaLetra(busqueda)
   return (
     <div className="bg-info">
       <div className="container">
@@ -62,8 +68,15 @@ const Formulario = ({guardarBusquedaLetra}) => {
                 </div>
               </div>
 
-              <button type="submit" className="btn btn-primary float-right">
-                Buscar
+              <button type="submit" className="btn btn-primary float-right" disabled={loading}>
+                {loading && (
+                  <i
+                    className="fa fa-refresh fa-spin"
+                    style={{ marginRight: "5px" }}
+                  />
+                )}
+                {loading && <span>Cargando</span>}
+                {!loading && <span>Buscar</span>}              
               </button>
             </fieldset>
           </form>

@@ -6,30 +6,43 @@ import Info from "./components/Info";
 
 import axios from "axios";
 function App() {
-  const [busquedaletra, guardarBusquedaLetra] = useState({});
+  const [busquedaletra, guardarBusquedaLetra] = useState({
+      artista: 'Maná',
+      cancion: 'Labios compartidos'
+  });
   const [letra, guardarLetra] = useState("");
-  const [info, guardarInfo] = useState("")
-  useEffect(() => {
-    if (Object.keys(busquedaletra).length === 0) return;
+  const [info, guardarInfo] = useState("");
+  const [loading, guardarLoading] = useState(false);
+  const consultarApiLetra = async () => {
+    guardarLoading(true);
 
-    const consultarApiLetro = async () => {
+    try {
       const { artista, cancion } = busquedaletra;
       const url = `https://api.lyrics.ovh/v1/${artista}/${cancion}`;
-
+  
       const url2 = `https://www.theaudiodb.com/api/v1/json/1/search.php?s=${artista}`;
       const [letra, informacion] = await Promise.all([axios(url), axios(url2)]);
-      console.info(letra.data.lyrics);
-      console.info(informacion.data.artists[0])
+      console.log(letra)
       guardarLetra(letra.data.lyrics);
       guardarInfo(informacion.data.artists[0])
-
-    };
-
-    consultarApiLetro();
+      guardarLoading(false);
+      
+    } catch (error) {
+      console.error(error)
+    }
+    guardarBusquedaLetra({})
+  };
+  useEffect(() => {
+    if (Object.keys(busquedaletra).length === 0) return;
+    consultarApiLetra();
   }, [busquedaletra, info]);
+
+
+
+
   return (
     <Fragment>
-      <Formulario guardarBusquedaLetra={guardarBusquedaLetra} />
+      <Formulario guardarBusquedaLetra={guardarBusquedaLetra}  loading={loading}/>
 
       <div className="container mt-5">
         <div className="row">
